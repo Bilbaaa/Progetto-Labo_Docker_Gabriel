@@ -15,6 +15,7 @@ services:
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
+      TRANSLATE_HOST: ${TRANSLATE_HOST}
 
 
     networks:
@@ -49,6 +50,25 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+
+
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+
+    container_name: daily-chat-translate
+
+    environment:
+      LT_LOAD_ONLY: it,en,de,fr
+
+    networks:
+      - chat-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/languages || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
 
 networks:
