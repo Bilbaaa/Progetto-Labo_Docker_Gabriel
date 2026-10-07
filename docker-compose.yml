@@ -12,10 +12,11 @@ services:
     ports:
       - "${APP_PORT}:80"
 
-    environment:
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      TRANSLATE_HOST: ${TRANSLATE_HOST}
+    # Se usati Redis o Translate diversi si possono utilizzare queste variabili.
+    # environment:   
+    #   REDIS_HOST: ${REDIS_HOST}
+    #   REDIS_PORT: ${REDIS_PORT}
+    #   TRANSLATE_HOST: ${TRANSLATE_HOST}
 
 
     networks:
