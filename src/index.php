@@ -18,6 +18,17 @@
 
         <div id="messages"></div>
 
+        <div class="language-box">
+            <label for="language">Lingua:</label>
+
+            <select id="language">
+                <option value="it">Italiano</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+            </select>
+        </div>
+
         <form id="chat-form">
             <input
                 type="text"

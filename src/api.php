@@ -4,6 +4,9 @@ header("Content-Type: application/json");
 
 $redisHost = getenv("REDIS_HOST") ?: "redis";
 $redisPort = getenv("REDIS_PORT") ?: 6379;
+$targetLanguage =
+    $_GET["lang"] ?? "it";
+$translateHost = getenv("TRANSLATE_HOST") ?: "http://libretranslate:5000";
 
 try {
 
@@ -58,12 +61,22 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     foreach ($messages as $message) {
 
-        $result[] = json_decode(
+    $decoded =
+        json_decode(
             $message,
             true
         );
 
-    }
+    $decoded["message"] =
+        translateText(
+            $decoded["message"],
+            $targetLanguage,
+            $translateHost
+        );
+
+    $result[] =
+        $decoded;
+}
 
     echo json_encode($result);
 
@@ -148,6 +161,55 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ]);
 
     exit;
+}
+
+function translateText(
+    $text,
+    $targetLanguage,
+    $translateHost
+) {
+
+    $data = [
+        "q" => $text,
+        "source" => "auto",
+        "target" => $targetLanguage,
+        "format" => "text"
+    ];
+
+    $options = [
+        "http" => [
+            "header" =>
+                "Content-Type: application/json\r\n",
+            "method" => "POST",
+            "content" =>
+                json_encode($data),
+            "timeout" => 5
+        ]
+    ];
+
+    $context =
+        stream_context_create($options);
+
+    $response =
+        @file_get_contents(
+            $translateHost . "/translate",
+            false,
+            $context
+        );
+
+    if ($response === false) {
+        return $text;
+    }
+
+    $result =
+        json_decode(
+            $response,
+            true
+        );
+
+    return
+        $result["translatedText"]
+        ?? $text;
 }
 
 

@@ -9,13 +9,21 @@ const messageInput =
 const messagesDiv =
     document.getElementById("messages");
 
+const languageSelect =
+    document.getElementById("language");
+
 
 async function loadMessages() {
 
     try {
 
+        const language =
+            languageSelect.value;
+
         const response =
-            await fetch("api.php");
+            await fetch(
+                `api.php?lang=${language}`
+            );
 
         const messages =
             await response.json();
@@ -49,7 +57,6 @@ async function loadMessages() {
 
         });
 
-
         messagesDiv.scrollTop =
             messagesDiv.scrollHeight;
 
@@ -64,6 +71,10 @@ async function loadMessages() {
 
 }
 
+languageSelect.addEventListener(
+    "change",
+    loadMessages
+);
 
 form.addEventListener(
     "submit",
